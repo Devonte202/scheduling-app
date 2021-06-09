@@ -9,19 +9,20 @@ app.use(express.static(path.join(__dirname, 'client/build')))
 // Anything that doesn't match the above, send back index.html
 
 
-app.get('/', async (req, res) => {
-    try {
+// Serve our base route that returns a message
+app.get('/api', async (req, res) => {
+  try {
     const testMessage = 'Server Is Alive';
     res.status(200).send(testMessage);
-} catch (err) {
+  } catch (err) {
     console.log(err);
   }
 })
 
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname + '/client/build/index.html'))
-//   })
-// Serve our base route that returns a message
+// Serves Frontend
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'))
+})
 
 
 app.listen(PORT, () => {
