@@ -1,0 +1,28 @@
+{
+  "name": "scheduling-app",
+  "version": "1.0.0",
+  "description": "Scheduling app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "serve": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Devonte202/scheduling-app.git"
+  },
+  "author": "Devonte, Shemar, and Mark",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Devonte202/scheduling-app/issues"
+  },
+  "homepage": "https://github.com/Devonte202/scheduling-app#readme",
+  "dependencies": {
+    "argon2": "^0.28.2",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
