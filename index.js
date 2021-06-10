@@ -10,10 +10,10 @@ app.use(express.static(path.join(__dirname, 'client/build')))
 
 
 // Serve our base route that returns a message
-app.get('/api', async (req, res) => {
+app.get('/api/checkConnection', async (req, res) => {
   try {
-    const testMessage = 'Server Is Alive';
-    res.status(200).send(testMessage);
+    const testMessage = 'Welcome to Skedulrr';
+    res.status(200).json({message: testMessage});
   } catch (err) {
     console.log(err);
   }
