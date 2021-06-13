@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path')
+const db = require("./database/db");
 // Create the server
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +18,11 @@ app.get('/api/checkConnection', async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+})
+
+app.get('/api/testDBConnection', (req, res) => {
+  const queryText = 'SELECT * FROM test_table;';
+        db.query(queryText).then(results => {res.json({query: results.rows[0]})});
 })
 
 // Serves Frontend

@@ -18,6 +18,18 @@ function App() {
     verifyConnection();
   }, []);
 
+  useEffect(() => {
+    const verifyDBConnection = async () => {
+      try {
+        const response = await axios.get('/api/testDBConnection');
+        console.log(response.data.query);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    verifyDBConnection();
+  }, []);
+
   return (
     <div className="App">
      <NavBar />
