@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Advertisement } from 'semantic-ui-react';
-import { Jumbotron, Container, Nav, Navbar, Form, Button, FormControl } from 'react-bootstrap';
+import { Jumbotron, Container } from 'react-bootstrap';
+import NavBar from './components/NavBar';
 
 function App() {
   const [apiMessage, setApiMessage] = useState('');
@@ -20,16 +20,7 @@ function App() {
 
   return (
     <div className="App">
-      <Navbar style={{height: '70px'}} bg="light" expand="lg">
-        <Navbar.Brand href="#home">Skedulrr</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            <Nav.Link href="#about">About Us</Nav.Link>
-            <Nav.Link href="#plans">Plans</Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
+     <NavBar />
       <Jumbotron style={{height: '575px', backgroundPosition: 'center', backgroundImage: 'url("https://assets-global.website-files.com/5a690960b80baa0001e05b0f/5ca4b074e9c52631fc36f901_Schedule-Time.png")'}} fluid>
         <Container>
         <h1>{apiMessage}</h1>
