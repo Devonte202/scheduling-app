@@ -2,7 +2,11 @@
 -- Creates a table for business entity users
 --
 CREATE TABLE business(
+<<<<<<< HEAD
    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+=======
+   id PRIMARY KEY uuid DEFAULT uuid_generate_v4(),
+>>>>>>> bd9d4d9e199aa2db2b8f0a0438a5be7480871714
    name VARCHAR(50) NOT NULL,
    email VARCHAR(50) UNIQUE NOT NULL,
    phone_number CHAR(11) NOT NULL,
@@ -13,8 +17,13 @@ CREATE TABLE business(
 -- Creates a table for employee users belonging to business entities
 --
 CREATE TABLE employee(
+<<<<<<< HEAD
    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
    business_id uuid REFERENCES business(id),
+=======
+   id PRIMARY KEY uuid DEFAULT uuid_generate_v4(),
+   business_id int REFERENCES business(id),
+>>>>>>> bd9d4d9e199aa2db2b8f0a0438a5be7480871714
    first_name VARCHAR(50) NOT NULL,
    last_name VARCHAR(50) NOT NULL,
    email VARCHAR(50) UNIQUE NOT NULL,
@@ -27,7 +36,11 @@ CREATE TABLE employee(
 -- Creates a table for visiting user entities
 --
 CREATE TABLE customer(
+<<<<<<< HEAD
    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+=======
+   id PRIMARY KEY uuid DEFAULT uuid_generate_v4(),
+>>>>>>> bd9d4d9e199aa2db2b8f0a0438a5be7480871714
    first_name VARCHAR(50)  NOT NULL,
    last_name VARCHAR(50)  NOT NULL,
    email VARCHAR(50) UNIQUE NOT NULL,
