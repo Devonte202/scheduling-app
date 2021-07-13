@@ -1,4 +1,15 @@
 --
+-- Deletes all current tables and regrants permissions to postgres
+--
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO public;
+--
+-- Adds extention to create uuids
+--
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+--
 -- Creates a table for business entity users
 --
 CREATE TABLE business(
