@@ -2,14 +2,14 @@ import db from '../database/db'
 
 class Business {
 
-	static createAccount(name, email, phone_number, business_address, profile_image_url) {
+	static createAccount(name, email, phone_number, business_address, profileImageUrl) {
 		const queryText = 'INSERT INTO business (name, email, phone_number, business_address, profile_image_url) VALUES ($1, $2, $3, $4, $5);'
-		return db.query(queryText, [name, email, phone_number, business_address, profile_image_url])
+		return db.query(queryText, [name, email, phone_number, business_address, profileImageUrl])
 	}
 
-	static updateAccount(businessId, name, email, phone_number, business_address, profile_image_url){
+	static updateAccount(businessId, name, email, phone_number, business_address, profileImageUrl){
 		const queryText = 'UPDATE business SET name = $2, email = $3, phone_number = $4, business_address = $5, profile_image_url = $6 WHERE id = $1;'
-		return db.query(queryText,[businessId, name, email, phone_number, business_address, profile_image_url])
+		return db.query(queryText,[businessId, name, email, phone_number, business_address, profileImageUrl])
 			.then((data) => data.rows)
 	}
 
