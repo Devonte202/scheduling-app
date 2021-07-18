@@ -17,7 +17,7 @@ CREATE TABLE business(
    name VARCHAR(50) NOT NULL,
    email VARCHAR(50) UNIQUE NOT NULL,
    phone_number CHAR(11) NOT NULL,
-   employee_address VARCHAR(50),
+   business_address VARCHAR(50),
    profile_image_url VARCHAR(500) 
 );
 --
