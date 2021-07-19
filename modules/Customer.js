@@ -24,10 +24,27 @@ class Customer {
 			.then((data) => data.rows)
 	}
 
+    static getAppointmentById(customerId, appointmentId) {
+		const queryText = 'SELECT * FROM appointment WHERE customer_id = $1 AND id = $2;'
+		return db.query(queryText, [customerId, appointmentId])
+			.then((data) => data.rows)
+	}
+
     static getAllAppointments(customerId) {
-		const queryText = 'SELECT * FROM apppointment WHERE customer_id = $1;'
+		const queryText = 'SELECT * FROM appointment WHERE customer_id = $1;'
 		return db.query(queryText, [customerId])
 			.then((data) => data.rows)
+	}
+    
+    static createAppointment(timeslotId, customerId, employeeId, apptTime, details, eventType, reserved, isVirtual, apptLocation) {
+		const queryText = 'INSERT INTO appointment (timeslot_id, customer_id, employee_id, appt_time, details, event_type, reserved, is_virtual, appt_location) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);'
+		return db.query(queryText, [timeslotId, customerId, employeeId, apptTime, details, eventType, reserved, isVirtual, apptLocation])
+			.then((data) => data.rows)
+	}
+
+    static deleteAppointment(customerId, appointmentId) {
+		const queryText = 'DELETE FROM appointment WHERE customer_id = $1 AND id = $2;'
+		return db.query(queryText, [customerId, appointmentId])
 	}
 
 }
