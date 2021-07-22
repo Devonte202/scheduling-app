@@ -18,7 +18,8 @@ CREATE TABLE business(
    email VARCHAR(50) UNIQUE NOT NULL,
    phone_number CHAR(11) NOT NULL,
    business_address VARCHAR(50),
-   profile_image_url VARCHAR(500) 
+   profile_image_url VARCHAR(500),
+   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 --
 -- Creates a table for employee users belonging to business entities
@@ -32,7 +33,8 @@ CREATE TABLE employee(
    phone_number  char(11) NOT NULL,
    is_admin bool NOT NULL,
    password VARCHAR(100) NOT NULL,
-   profile_image_url VARCHAR(500) 
+   profile_image_url VARCHAR(500),
+   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 --
 -- Creates a table for visiting user entities
@@ -42,7 +44,8 @@ CREATE TABLE customer(
    first_name VARCHAR(50)  NOT NULL,
    last_name VARCHAR(50)  NOT NULL,
    email VARCHAR(50) UNIQUE NOT NULL,
-   phone_number char(11) NOT NULL 
+   phone_number char(11) NOT NULL ,
+   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 --
 -- Creates a schedule belonging to employees
@@ -60,7 +63,7 @@ CREATE TABLE timeslot(
    schedule_id uuid REFERENCES schedule(id),
    time_start TEXT NOT NULL,
    time_end TEXT NOT NULL,
-   date_created timestamptz,
+   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
    recurring BOOLEAN NOT NULL,
    avail_days TEXT NOT NULL,
    timezone TEXT NOT NULL
@@ -87,5 +90,6 @@ CREATE TABLE appointment(
    event_type VARCHAR(100),
    reserved BOOLEAN NOT NULL DEFAULT false,
    is_virtual BOOLEAN,
-   appt_location VARCHAR(500)
+   appt_location VARCHAR(500),
+   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
