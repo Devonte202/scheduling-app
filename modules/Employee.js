@@ -29,7 +29,7 @@ class Employee {
 	}
 
     static deleteSchedule(employeeId){
-		const queryText = 'DELETE FROM schedule WHERE employee_id = $1;'
+		const queryText = 'DELETE * FROM schedule WHERE employee_id = $1;'
 		return db.query(queryText, [employeeId])
 	}
 
@@ -50,6 +50,11 @@ class Employee {
 		return db.query(queryText, [scheduleId, timeStart, timeEnd, dateCreated, recurring, availDays, timezone])
 	}
 
+	static deleteTimeslot(timeslotId){
+		const queryText = 'DELETE * FROM timeslot WHERE id = $1;'
+		return db.query(queryText, [timeslotId])
+	}
+
 	static getAllTimeslots(employeeId) {
 		const queryText = 'SELECT * FROM timeslot WHERE employee_id = $1;'
 		return db.query(queryText, [employeeId])
@@ -59,6 +64,11 @@ class Employee {
 	static createExceptions(employeeId, timeslotId, intervalStart, intervalEnd, exceptionReason) {
 		const queryText = 'INSERT INTO timeslot (employee_id, timeslot_id, interval_start, interval_end, exception_reason) VALUES ($1, $2, $3, $4, $5);'
 		return db.query(queryText, [employeeId, timeslotId, intervalStart, intervalEnd, exceptionReason])
+	}
+	
+	static deleteException(exceptionId){
+		const queryText = 'DELETE FROM exception WHERE id = $1;'
+		return db.query(queryText, [exceptionId])
 	}
 
 	static getAllExceptions(employeeId) {
