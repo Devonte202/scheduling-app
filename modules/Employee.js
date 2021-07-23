@@ -50,6 +50,41 @@ class Employee {
 		return db.query(queryText, [scheduleId, timeStart, timeEnd, dateCreated, recurring, availDays, timezone])
 	}
 
+	static getAllTimeslots(employeeId) {
+		const queryText = 'SELECT * FROM timeslot WHERE employee_id = $1;'
+		return db.query(queryText, [employeeId])
+			.then((data) => data.rows)
+	}
+	
+	static createExceptions(employeeId, timeslotId, intervalStart, intervalEnd, exceptionReason) {
+		const queryText = 'INSERT INTO timeslot (employee_id, timeslot_id, interval_start, interval_end, exception_reason) VALUES ($1, $2, $3, $4, $5);'
+		return db.query(queryText, [employeeId, timeslotId, intervalStart, intervalEnd, exceptionReason])
+	}
+
+	static getAllExceptions(employeeId) {
+		const queryText = 'SELECT * FROM exception WHERE employee_id = $1;'
+		return db.query(queryText, [employeeId])
+			.then((data) => data.rows)
+	}
+
+	static getAppointmentById(employeeId, appointmentId) {
+		const queryText = 'SELECT * FROM appointment WHERE employee_id = $1 AND id = $2;'
+		return db.query(queryText, [employeeId, appointmentId])
+			.then((data) => data.rows)
+	}
+
+    static getAllAppointmentsById(employeeId) {
+		const queryText = 'SELECT * FROM appointment WHERE employee_id = $1;'
+		return db.query(queryText, [employeeId])
+			.then((data) => data.rows)
+	}
+
+	static getAllAppointments(businessId) {
+		const queryText = 'SELECT * FROM appointment WHERE business_id = $1;'
+		return db.query(queryText, [businessId])
+			.then((data) => data.rows)
+	}
+
 }
 
 module.exports = Employee

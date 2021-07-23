@@ -53,7 +53,7 @@ CREATE TABLE customer(
 CREATE TABLE schedule(
    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
    employee_id uuid REFERENCES employee(id),
-   event_types char(11) NOT NULL 
+   event_types char(30) NOT NULL 
 );
 --
 -- Creates a table for timeslots belonging to schedules representing availability 
@@ -71,11 +71,14 @@ CREATE TABLE timeslot(
 --
 -- Creates a table for exceptions to reccuring availibilities 
 --
-CREATE TABLE exceptions(
+CREATE TABLE exception(
    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+   employee_id uuid REFERENCES employee(id),
    timeslot_id uuid REFERENCES timeslot(id),
-   interval_start TIMESTAMPTZ,
-   interval_end TIMESTAMPTZ
+   interval_start TIMESTAMPTZ NOT NULL,
+   interval_end TIMESTAMPTZ NOT NULL,
+   exception_reason TEXT NOT NULL, 
+   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 --
 -- Creates a table for appointments created by customers reserving timeslots
@@ -85,11 +88,12 @@ CREATE TABLE appointment(
    timeslot_id uuid REFERENCES timeslot(id),
    customer_id uuid REFERENCES customer(id),
    employee_id uuid REFERENCES employee(id),
+   business_id uuid REFERENCES business(id),
    appt_time TIMESTAMPTZ NOT NULL,
    details VARCHAR(100),
-   event_type VARCHAR(100),
+   event_type VARCHAR(100) NOT NULL,
    reserved BOOLEAN NOT NULL DEFAULT false,
-   is_virtual BOOLEAN,
+   is_virtual BOOLEAN NOT NULL,
    appt_location VARCHAR(500),
    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );

@@ -36,9 +36,9 @@ class Customer {
 			.then((data) => data.rows)
 	}
     
-    static createAppointment(timeslotId, customerId, employeeId, apptTime, details, eventType, reserved, isVirtual, apptLocation) {
-		const queryText = 'INSERT INTO appointment (timeslot_id, customer_id, employee_id, appt_time, details, event_type, reserved, is_virtual, appt_location) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);'
-		return db.query(queryText, [timeslotId, customerId, employeeId, apptTime, details, eventType, reserved, isVirtual, apptLocation])
+    static createAppointment(timeslotId, businessId, customerId, employeeId, apptTime, details, eventType, reserved, isVirtual, apptLocation) {
+		const queryText = 'INSERT INTO appointment (timeslot_id, customer_id, employee_id, appt_time, details, event_type, reserved, is_virtual, appt_location, business_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);'
+		return db.query(queryText, [timeslotId, businessId, customerId, employeeId, apptTime, details, eventType, reserved, isVirtual, apptLocation])
 			.then((data) => data.rows)
 	}
 
