@@ -65,7 +65,7 @@ class Employee {
 		const queryText = 'INSERT INTO timeslot (employee_id, timeslot_id, interval_start, interval_end, exception_reason) VALUES ($1, $2, $3, $4, $5);'
 		return db.query(queryText, [employeeId, timeslotId, intervalStart, intervalEnd, exceptionReason])
 	}
-	
+
 	static deleteException(exceptionId){
 		const queryText = 'DELETE FROM exception WHERE id = $1;'
 		return db.query(queryText, [exceptionId])
