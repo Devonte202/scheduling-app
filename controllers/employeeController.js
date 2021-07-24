@@ -85,3 +85,9 @@ const register = async (req, res) => {
  const logout = (req, res) => {
   res.clearCookie("skedulrrToken").sendStatus(200);
 };
+
+module.exports = {
+  register,
+  login,
+  logout
+}
