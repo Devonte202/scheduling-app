@@ -39,6 +39,12 @@ class Employee {
 			.then((data) => data.rows)
 	}
 
+	static getByEmail(employeeEmail) {
+		const queryText = 'SELECT * FROM employee WHERE email = $1;'
+		return db.query(queryText, [employeeEmail])
+			.then((data) => data.rows)
+	}
+
     static isAdmin(employeeId) {
 		const queryText = 'SELECT is_admin FROM employee WHERE id = $1;'
 		return db.query(queryText, [employeeId])

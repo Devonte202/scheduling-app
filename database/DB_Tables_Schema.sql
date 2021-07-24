@@ -29,7 +29,7 @@ CREATE TABLE employee(
    business_id uuid REFERENCES business(id),
    first_name VARCHAR(50) NOT NULL,
    last_name VARCHAR(50) NOT NULL,
-   email VARCHAR(50) UNIQUE NOT NULL,
+   email VARCHAR(150) UNIQUE NOT NULL,
    phone_number  char(11) NOT NULL,
    is_admin bool NOT NULL,
    password VARCHAR(100) NOT NULL,
