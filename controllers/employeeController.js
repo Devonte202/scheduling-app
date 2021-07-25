@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { restart } = require("nodemon");
 const Employee = require("../modules/Employee");
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 require("dotenv").config();
@@ -45,7 +46,7 @@ const register = async (req, res) => {
       const saltRounds = 7;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       Employee.createAccount(businessId, firstName, lastName, email, phoneNumber, isAdmin, hashedPassword, profileImageUrl);
-      const token = jwt.sign({ email, isAdmin }, process.env.AUTH_KEY);
+      const token = jwt.sign({ email, isAdmin, businessId }, process.env.AUTH_KEY);
       res.cookie("skedulrrToken", token).sendStatus(200);
     } catch (err) {
       res.status(500).send(err);
@@ -69,7 +70,7 @@ const register = async (req, res) => {
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (isValidPassword) {
-      const token = jwt.sign({ email, isAdmin: user.isAdmin }, process.env.AUTH_KEY);
+      const token = jwt.sign({ email, isAdmin: user.isAdmin, businessId: user.businessId }, process.env.AUTH_KEY);
       res.cookie("skedulrrToken", token).status(200).send(JSON.stringify(user));
     }
   } catch (err) {
@@ -86,8 +87,102 @@ const register = async (req, res) => {
   res.clearCookie("skedulrrToken").sendStatus(200);
 };
 
+const updateEmployeeInfo = async (req, res) => {
+  try {
+    const { newData: employeeId, firstName, lastName, email, phoneNumber, isAdmin, password, profileImageUrl } = req.body;
+    await Employee.updateAccount(employeeId, firstName, lastName, email, phoneNumber, isAdmin, password, profileImageUrl);
+    res.sendStatus(200);
+  } catch (err) {
+    restart.status(500).send(err);
+  }
+};
+
+/**
+ * Retrieves the current logged in employee from the database and sends it to the client
+ * @param {object} req - The request object containing users credentials
+ * @param {object} res - The response object used to send a repsonse back to the client
+ */
+ const getLoggedInEmployee = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await Employee.getById(userId);
+    if (!user) throw Error("User Does Not Exist");
+    res.status(200).send(JSON.stringify(user));
+  } catch (err) {
+    res.status(404).send(err);
+  }
+};
+/**
+ * Retrieves the current logged in employee from the database and sends it to the client
+ * @param {object} req - The request object containing users credentials
+ * @param {object} res - The response object used to send a repsonse back to the client
+ */
+const getEmployeeById = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    const user = await Employee.getById(employeeId);
+    if (!user) throw Error("Employee Does Not Exist");
+    res.status(200).send(JSON.stringify(user));
+  } catch (err) {
+    res.status(404).send(err);
+  }
+};
+
+/**
+ * Creates a schedule for a new employee
+ * @param {object} req - The request object containing users credentials
+ * @param {object} res - The response object used to send a repsonse back to the client
+ */
+ const createSchedule = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    await Employee.createSchedule(employeeId, eventTypes);
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+};
+
+/**
+ * Creates a schedule for a new employee
+ * @param {object} req - The request object containing users credentials
+ * @param {object} res - The response object used to send a repsonse back to the client
+ */
+ const updateSchedule = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    await Employee.createSchedule(employeeId, eventTypes);
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+};
+
+/**
+ * Get schedule for a specific employee
+ * @param {object} req - The request object containing users credentials
+ * @param {object} res - The response object used to send a repsonse back to the client
+ */
+ const getSchedule = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    const schedule = await Employee.getScheduleById(employeeId);
+    if (!schedule) throw Error("Schedule has not yet been created");
+    res.status(200).send(JSON.stringify(schedule));
+  } catch (err) {
+    res.status(404).send(err);
+  }
+};
+
+
+
 module.exports = {
   register,
   login,
-  logout
+  logout,
+  getLoggedInEmployee,
+  getEmployeeById,
+  updateEmployeeInfo,
+  createSchedule,
+  getSchedule
 }
