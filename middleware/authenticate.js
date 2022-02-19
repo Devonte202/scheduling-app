@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
-const Employee = require("../modules/Employee");
-require("dotenv").config();
+import jwt from "jsonwebtoken";
+import Employee from "../modules/Employee.js";
+
 
 /**
  * Verifies authenticity of user's JWT and attaches user to request object
@@ -29,4 +29,4 @@ const authenticate = async (req, res, next) => {
   next();
 };
 
-module.exports = authenticate;
+export default authenticate;

@@ -1,9 +1,8 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { restart } = require("nodemon");
-const Employee = require("../modules/Employee");
-const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
-require("dotenv").config();
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import nodemon from "nodemon";
+import Employee from "../modules/Employee.js";
+
 
 
 /**
@@ -17,20 +16,31 @@ require("dotenv").config();
  const validateInputs = (firstName, lastName, email, phoneNumber, password) => {
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/i;
     const nameRegex = /^[a-z ,.'-]+$/i;
-    const parsedNumber = phoneUtil.parse(phoneNumber, 'US')
-    if(nameRegex.test(firstName === false) || nameRegex.test(lastName === false)) throw Error("Invalid first or last name.");
-    if (!phoneUtil.isValidNumberForRegion(parsedNumber, 'US')) throw Error("Phone number invalid.");
-    if (emailRegex.test(email) === false) throw Error("Email invalid.");
-    if (password.length < 8) throw Error("Password too short.");
+    const phoneRegex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+    if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) throw "Invalid first or last name.";
+    if (!phoneRegex.test(phoneNumber)) throw "Phone number invalid.";
+    if (emailRegex.test(email) === false) throw "Email invalid.";
+    if (password.length < 8) throw "Password too short.";
     return true;
   };
+
+  const encryptPassword = async (password) => {
+    try {
+      const SALT_ROUNDS = 7;
+      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+      return hashedPassword;
+    } catch (err) {
+      throw err;
+    }
+    
+  }
 
 /**
  * Registers user's credentials, adding them to the database using the User model
  * @param {object} req - The request object containing users credentials
  * @param {object} res - The response object used to send a repsonse back to the client
  */
-const register = async (req, res) => {
+export const register = async (req, res) => {
     try {
       const {
         businessId, 
@@ -42,14 +52,13 @@ const register = async (req, res) => {
         isAdmin,
         profileImageUrl
       } = req.body;
-      await validateInputs(firstName, lastName, email, phoneNumber, password);
-      const saltRounds = 7;
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      validateInputs(firstName, lastName, email, phoneNumber, password);
+      const hashedPassword = await encryptPassword(password)
       Employee.createAccount(businessId, firstName, lastName, email, phoneNumber, isAdmin, hashedPassword, profileImageUrl);
       const token = jwt.sign({ email, isAdmin, businessId }, process.env.AUTH_KEY);
       res.cookie("skedulrrToken", token).sendStatus(200);
     } catch (err) {
-      res.status(500).send(err);
+      res.status(500).json({err});
     }
   };
 
@@ -58,9 +67,10 @@ const register = async (req, res) => {
  * @param {object} req - The request object containing users credentials
  * @param {object} res - The response object used to send a repsonse back to the client
  */
- const login = async (req, res) => {
+ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
     const user = await Employee.getByEmail(email);
 
     if (!user) {
@@ -72,9 +82,11 @@ const register = async (req, res) => {
     if (isValidPassword) {
       const token = jwt.sign({ email, isAdmin: user.isAdmin, businessId: user.businessId }, process.env.AUTH_KEY);
       res.cookie("skedulrrToken", token).status(200).send(JSON.stringify(user));
+    } else {
+      throw "Password incorrect"
     }
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({err});
   }
 };
 
@@ -83,17 +95,30 @@ const register = async (req, res) => {
  * @param {object} req - The request object containing users credentials
  * @param {object} res - The response object used to send a repsonse back to the client
  */
- const logout = (req, res) => {
+ export const logout = (req, res) => {
   res.clearCookie("skedulrrToken").sendStatus(200);
 };
 
-const updateEmployeeInfo = async (req, res) => {
+export const updateEmployeeInfo = async (req, res) => {
   try {
-    const { newData: employeeId, firstName, lastName, email, phoneNumber, isAdmin, password, profileImageUrl } = req.body;
-    await Employee.updateAccount(employeeId, firstName, lastName, email, phoneNumber, isAdmin, password, profileImageUrl);
+    const userInfo = await Employee.getById(req.userId);
+    const { firstName, lastName, email, phoneNumber, isAdmin, password, profileImageUrl } = req.body;
+    const hashedPassword = password ? await encryptPassword(password) : undefined;
+
+    const updatedUserInfo = [
+      firstName || userInfo.first_name,
+      lastName || userInfo.last_name,
+      email || userInfo.email,
+      phoneNumber || userInfo.phone_number,
+      isAdmin || userInfo.is_admin,
+      hashedPassword || userInfo.password,
+      profileImageUrl || userInfo.profile_image_url
+    ]
+
+    await Employee.updateAccount(req.userId, ...updatedUserInfo);
     res.sendStatus(200);
   } catch (err) {
-    restart.status(500).send(err);
+    res.status(500).json({err});
   }
 };
 
@@ -102,14 +127,14 @@ const updateEmployeeInfo = async (req, res) => {
  * @param {object} req - The request object containing users credentials
  * @param {object} res - The response object used to send a repsonse back to the client
  */
- const getLoggedInEmployee = async (req, res) => {
+ export const getLoggedInEmployee = async (req, res) => {
   try {
     const userId = req.userId;
     const user = await Employee.getById(userId);
-    if (!user) throw Error("User Does Not Exist");
+    if (!user) throw "User Does Not Exist";
     res.status(200).send(JSON.stringify(user));
   } catch (err) {
-    res.status(404).send(err);
+    res.status(404).json({err});
   }
 };
 /**
@@ -117,7 +142,7 @@ const updateEmployeeInfo = async (req, res) => {
  * @param {object} req - The request object containing users credentials
  * @param {object} res - The response object used to send a repsonse back to the client
  */
-const getEmployeeById = async (req, res) => {
+export const getEmployeeById = async (req, res) => {
   try {
     const { employeeId } = req.params;
     const user = await Employee.getById(employeeId);
@@ -133,7 +158,7 @@ const getEmployeeById = async (req, res) => {
  * @param {object} req - The request object containing users credentials
  * @param {object} res - The response object used to send a repsonse back to the client
  */
- const createSchedule = async (req, res) => {
+ export const createSchedule = async (req, res) => {
   try {
     const { employeeId } = req.params;
     await Employee.createSchedule(employeeId, eventTypes);
@@ -148,7 +173,7 @@ const getEmployeeById = async (req, res) => {
  * @param {object} req - The request object containing users credentials
  * @param {object} res - The response object used to send a repsonse back to the client
  */
- const updateSchedule = async (req, res) => {
+ export const updateSchedule = async (req, res) => {
   try {
     const { employeeId } = req.params;
     await Employee.createSchedule(employeeId, eventTypes);
@@ -163,7 +188,7 @@ const getEmployeeById = async (req, res) => {
  * @param {object} req - The request object containing users credentials
  * @param {object} res - The response object used to send a repsonse back to the client
  */
- const getSchedule = async (req, res) => {
+ export const getSchedule = async (req, res) => {
   try {
     const { employeeId } = req.params;
     const schedule = await Employee.getScheduleById(employeeId);
@@ -176,7 +201,7 @@ const getEmployeeById = async (req, res) => {
 
 
 
-module.exports = {
+export default {
   register,
   login,
   logout,

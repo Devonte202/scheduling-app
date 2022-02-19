@@ -1,11 +1,14 @@
-const express = require("express");
+import express from "express";
 const employeeRouter = express.Router();
-const employeeController = require("../controllers/employeeController");
-const authenticate = require("../middleware/authenticate");
+import { register, login, logout, updateEmployeeInfo, getLoggedInEmployee, getEmployeeById } from "../controllers/employeeController.js";
+import authenticate from "../middleware/authenticate.js";
 
 // API employee controller paths
-employeeRouter.post("/employee/api/register", employeeController.register);
-employeeRouter.post("/employee/api/login", employeeController.login);
-employeeRouter.get("/employee/api/logout", employeeController.logout);
+employeeRouter.post("/employee/api/register", register);
+employeeRouter.post("/employee/api/login", login);
+employeeRouter.get("/employee/api/logout", logout);
+employeeRouter.put("/employee/api/updateInfo", authenticate, updateEmployeeInfo);
+employeeRouter.get("/employee/api/getLoggedInEmployee", authenticate, getLoggedInEmployee);
+employeeRouter.get("/employee/api/getEmployeeById/:employeeId", getEmployeeById);
 
-module.exports = employeeRouter;
+export default employeeRouter;
