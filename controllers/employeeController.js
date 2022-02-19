@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import nodemon from "nodemon";
 import Employee from "../modules/Employee.js";
 
 
