@@ -7,14 +7,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "serve": "nodemon index.js",
-    "heroku-postbuild": "npm install && node index.js"
+    "serve": "nodemon index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Devonte202/skedulrr-api.git"
   },
-  "author": "Devonte, Shemar, and Mark",
+  "author": "Devonte",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Devonte202/skedulrr-api/issues"

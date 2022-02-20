@@ -53,7 +53,8 @@ CREATE TABLE customer(
 CREATE TABLE schedule(
    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
    employee_id uuid REFERENCES employee(id),
-   event_types char(30) NOT NULL 
+   event_types char(30) NOT NULL
+   has_availability BOOLEAN NOT NULL
 );
 --
 -- Creates a table for timeslots belonging to schedules representing availability 

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import jwt from "jsonwebtoken";
 import Employee from "../modules/Employee.js";
 
@@ -17,7 +18,7 @@ const authenticate = async (req, res, next) => {
     token,
     process.env.AUTH_KEY,
     (err, decoded) => {
-      if (err) throw Error("Failed to authenticate token");
+      if (err) throw "Failed to authenticate token";
       return decoded;
     }
   );

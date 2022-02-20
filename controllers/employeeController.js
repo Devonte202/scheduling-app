@@ -17,12 +17,16 @@ import Employee from "../modules/Employee.js";
     const nameRegex = /^[a-z ,.'-]+$/i;
     const phoneRegex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
     if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) throw "Invalid first or last name.";
-    if (!phoneRegex.test(phoneNumber)) throw "Phone number invalid.";
+    if (!phoneRegex.test(phoneNumber) && !isNaN(phoneNumber)) throw "Phone number invalid.";
     if (emailRegex.test(email) === false) throw "Email invalid.";
     if (password.length < 8) throw "Password too short.";
     return true;
   };
 
+  /**
+ * Encrypts user's password by hashing it
+ * @param {string} password - The users unhashed password
+ */
   const encryptPassword = async (password) => {
     try {
       const SALT_ROUNDS = 7;
@@ -51,9 +55,10 @@ export const register = async (req, res) => {
         isAdmin,
         profileImageUrl
       } = req.body;
+
       validateInputs(firstName, lastName, email, phoneNumber, password);
       const hashedPassword = await encryptPassword(password)
-      Employee.createAccount(businessId, firstName, lastName, email, phoneNumber, isAdmin, hashedPassword, profileImageUrl);
+      await Employee.createAccount(businessId, firstName, lastName, email, phoneNumber, isAdmin, hashedPassword, profileImageUrl);
       const token = jwt.sign({ email, isAdmin, businessId }, process.env.AUTH_KEY);
       res.cookie("skedulrrToken", token).sendStatus(200);
     } catch (err) {
@@ -98,6 +103,11 @@ export const register = async (req, res) => {
   res.clearCookie("skedulrrToken").sendStatus(200);
 };
 
+/**
+ * Updates employees information based on what new data is passed in the body
+ * @param {object} req - The request object containing users credentials
+ * @param {object} res - The response object used to send a repsonse back to the client
+ */
 export const updateEmployeeInfo = async (req, res) => {
   try {
     const userInfo = await Employee.getById(req.userId);
@@ -143,12 +153,12 @@ export const updateEmployeeInfo = async (req, res) => {
  */
 export const getEmployeeById = async (req, res) => {
   try {
-    const { employeeId } = req.params;
+    const { employee_id: employeeId } = req.headers;
     const user = await Employee.getById(employeeId);
     if (!user) throw Error("Employee Does Not Exist");
-    res.status(200).send(JSON.stringify(user));
+    res.status(200).json({user});
   } catch (err) {
-    res.status(404).send(err);
+    res.status(404).json({err});
   }
 };
 
@@ -159,7 +169,7 @@ export const getEmployeeById = async (req, res) => {
  */
  export const createSchedule = async (req, res) => {
   try {
-    const { employeeId } = req.params;
+    const { employeeId, eventTypes } = req.body;
     await Employee.createSchedule(employeeId, eventTypes);
     res.sendStatus(200);
   } catch (err) {
